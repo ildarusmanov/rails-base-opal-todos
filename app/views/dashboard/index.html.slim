@@ -1,4 +1,9 @@
-- title "Dashboard"
+- title "Todos"
 
 .view
-  == content
+  .add_form
+    input type="text" id="new_todo" class="span10" placeholder="Type todo..."
+    br
+    button id="add_todo" class="btn btn-success" ="Add new todo item"
+
+  div id="todos"

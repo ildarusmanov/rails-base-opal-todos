@@ -136,6 +136,26 @@ GEM
     multi_json (1.7.8)
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
+    opal (0.4.4)
+      source_map
+    opal-activesupport (0.0.4)
+      opal (~> 0.4.2)
+    opal-jquery (0.0.13)
+      opal (>= 0.4.4)
+    opal-rails (0.5.2)
+      jquery-rails
+      opal (~> 0.4.4)
+      opal-activesupport
+      opal-jquery (>= 0.0.8)
+      opal-spec (~> 0.3.1)
+      opal-sprockets (~> 0.2.0)
+      rails (>= 3.2.13, < 5.0)
+    opal-spec (0.3.1)
+      opal (~> 0.4.4)
+      opal-sprockets (~> 0.2.0)
+    opal-sprockets (0.2.0)
+      opal (~> 0.4.4)
+      sprockets
     orm_adapter (0.4.0)
     pg (0.15.1)
     polyglot (0.3.3)
@@ -226,6 +246,8 @@ GEM
       railties (>= 3.0, < 4.1)
       slim (~> 2.0)
     slop (3.4.6)
+    source_map (3.0.1)
+      json
     sprockets (2.10.0)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -292,6 +314,7 @@ DEPENDENCIES
   less-rails-bootstrap
   letter_opener
   mail_safe
+  opal-rails
   pg
   pry-rails
   quiet_assets

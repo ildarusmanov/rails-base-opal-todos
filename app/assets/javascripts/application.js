@@ -6,6 +6,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require opal
+//= require opal_ujs
 //= require twitter/bootstrap/alert
 //= require twitter/bootstrap/dropdown
 //= require_tree .

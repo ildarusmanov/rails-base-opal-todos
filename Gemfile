@@ -23,6 +23,8 @@ gem 'slim'
 gem 'thin'
 gem 'rollbar', '~> 0.10.3'
 
+gem 'opal-rails'
+
 gem 'github-markdown' # only for dashboard controller
 
 group :development do

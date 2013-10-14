@@ -1,106 +1,118 @@
-# Skeleton for new Rails 4 based application
+# Opal...nice to meet you!
 
-[<img src="https://semaphoreapp.com/api/v1/projects/31b68af8b073708a56e4e005bbcba2af4802816d/76140/badge.png">](https://semaphoreapp.com/projects/2742)
+## What is Opal?
 
+"Opal is a ruby to javascript compiler. It is source-to-source, making it fast as a runtime. Opal includes a compiler (which can be run in any browser), a corelib and runtime implementation. The corelib/runtime is also very small (10.8kb gzipped)." Сс) opalrb.org
 
-This simple application includes ruby/rails technology which we use in the FlatStack for new projects.
-Application currently based on Rails 4 stable branch and Ruby 2.0.0
+Opal is hosted on github and documentation for that can be found on https://github.com/opal/opal.
 
-## Application gems:
+## Why Opal needs?
 
-* [Less Rails](https://github.com/metaskills/less-rails) dynamic stylesheet language for asset pipeline
-* [Less Rails Bootstrap](https://github.com/metaskills/less-rails-bootstrap) for styling app with Twiter Bootstrap
-* [Slim](https://github.com/stonean/slim) for views
-* [Simple Form](https://github.com/plataformatec/simple_form) for forms
-* [Decent Exposure](https://github.com/voxdolo/decent_exposure) for DRY controllers
-* [Kaminari](https://github.com/amatsuda/kaminari) for pagination
-* [Devise](http://github.com/plataformatec/devise) for basic auth
-* [Airbrake](https://github.com/airbrake/airbrake) for exception notification
+I think it is good idea to use single language to write you application server side and client side.
+And it is better when you are using beautiful Ruby.
 
-## Development gems
+I think the best way to understand how it works - write some client side application with Opal.
+Let`s get it on.
 
-* [Thin](https://github.com/macournoyer/thin) as rails web server
-* [Foreman](https://github.com/ddollar/foreman) for managing development stack with Procfile
-* [Letter Opener](https://github.com/ryanb/letter_opener) for preview mail in the browser instead of sending
-* [Mail Safe](https://github.com/myronmarston/mail_safe) keep ActionMailer emails from escaping into the wild during development
-* [Bullet](https://github.com/flyerhzm/bullet) gem to kill N+1 queries and unused eager loading
-* [Rails Best Practices](https://github.com/railsbp/rails_best_practices) code metric tool
-* [Brakeman](https://github.com/presidentbeef/brakeman) static analysis security vulnerability scanner
-* [Pry Rails](https://github.com/rweng/pry-rails) is an alternative to the standard IRB shell for Ruby
+## Application
 
-## Testing gems
+We are will write simple todos application based on one class. This class must can to add, drop and render todos to us.
 
-* Turnip, Capybara, and Capybara Webkit for integration testing, including JavaScript behavior
-* [Factory Girl](https://github.com/thoughtbot/factory_girl) for easier creation of test data
-* [RSpec](https://github.com/rspec/rspec) for awesome, readable isolation testing
-* [Shoulda Matchers](http://github.com/thoughtbot/shoulda-matchers) for frequently needed Rails and RSpec matchers
-* [Email Spec](https://github.com/bmabey/email-spec) Collection of rspec matchers and cucumber steps for testing emails
+## Setup Opal
 
+Installation very easy. You can find instructions on https://github.com/opal/opal-rails.
 
-## Initializes
+## Writing todos
 
-* `01_config.rb` - shortcut for getting application config with `app_config`
-* `mailer.rb` - setup default hosts for mailer from configuration
-* `time_formats.rb` - setup default time formats, so you can use them like object.create_at.to_s(:us_time)
-* `requires.rb` - automatically requires everything in lib/ & lib/extensions
+First I have used for http://github.com/fs/rails-base for setup simple Rails 4 application. You can use it too.
+After that you need to setup Opal. You can find above how to do that.
 
-## Scripts
+Now when we have working Rails 4 skeleton application. We can write first lines of code.
 
-* `bin/bootstrap` - setup required gems and migrate db if needed
-* `bin/quality` - runs brakeman and rails_best_practices for the app
-* `bin/ci` - should be used in the CI or locally
-* `bin/server` - to run server locally
+Create controller with some action and create some file with *.js.opal extension and write that code.
 
-## Quick start
+```
+require 'opal-jquery' # add jquery support
 
-Clone application as new project with original repository named "rails-base"
+puts "Hello world!(console)" # output to console
 
-    git clone git://github.com/fs/rails-base.git --origin rails-base [MY-NEW-PROJECT]
+Element.find('body').html = "Hello world!"
+```
+Do not forget to require that from assets/javascripts/application.js
+Sstart your server and open application in browser.
+In console you must see "Hello world!(console)" and in body of you page must be "Hello world!".
 
+More info about supported functionality you can find on opalrb.org.
 
-Create your new repo on GitHub and push master into it.
-Make sure master branch is tracking origin repo.
+Now we can start writing our todos, because all what we need is Ruby :)
 
-    git remote add origin git@github.com:[MY-GITHUB-ACCOUNT]/[MY-NEW-PROJECT].git
-    git push -u origin master
+I have been created simple view for todos with Slim(app/views/dashboard/index.html.slim)
+```
+- title "Todos"
 
-Run bootstrap script
+.view
+  .add_form
+    input type="text" id="new_todo" class="span10" placeholder="Type todo..."
+    br
+    button id="add_todo" class="btn btn-success" ="Add new todo item"
 
-    bin/bootstrap
+  div id="todos"
+```
 
-Make sure all test are green
+There are we have simple form and div element for todos list.
 
-    bundle exec rspec spec
+And I have writed simple class on Ruby that can to save todos into array and remove it form that.
+For each action have been created add and drop methods. We need one method to render pur todos into our div#todos element.
 
-Run app
+Below you can see my class
+```
+class TodoList
+  def initialize
+    @todos = []
+  end
 
-    bin/server
+  def add
+   @todos << Element.find('input#new_todo').value
+   @todos.uniq!
+   Element.find('input#new_todo').value = ""
+   render
+  end
 
-**Do not forget to update this file!**
+  def drop(todo)
+    @todos.delete todo
+    render
+  end
 
-    mv doc/README_TEMPLATE.md README.md
-    # update README.md
-    git commit -am "Update README.md"
+  def render
+    Element.find('#todos').html = ""
 
-## How to update existing project with new changes from rails-base repo
+    @todos.each do |todo|
+      Element.find('#todos').append('<div class="todo">' + todo + '</div>')
+    end
+    # binding click event to drop
+    Element.find('#todos div').on :click do |e|
+      drop e.current_target.html #remove by title of todo
+    end
+  end
+end
+```
+Now we need to initialize this after document.ready, we need some like this js construction:
+```
+$(document).ready(function(){
+  //Some code
+})
+```
 
-You can fetch latest changes from rails-base repo and merge or cherry-pick commits
+And opal support that
+```
+Document.ready? do
+  todos = TodoList.new
 
-    git fetch rails-base
-    git flow feature start rails-base-update
-    git merge rails-base/master
+  Element.find('#add_todo').on :click do
+    todos.add
+  end
+end
+```
 
-    # fix conflicts
-    # commit
-    # test
-
-    git flow feature finish rails-base-update
-
-## Note on Patches/Pull Requests
-
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send a pull request. Bonus points for topic branches.
+Let`s try to start this and play with that.
+You can find more info about Opal on opalrb.org
